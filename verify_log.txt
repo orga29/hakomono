@@ -1,0 +1,17 @@
+C:\Users\win\AppData\Local\Programs\Python\Python312\Lib\site-packages\openpyxl\reader\workbook.py:118: UserWarning: Print area cannot be set to Defined name: 在庫集計表!$B:$B.
+  warn(f"Print area cannot be set to Defined name: {defn.value}.")
+--- 1. Loading Source ---
+Filtered rows: 39
+Checking for excluded codes (>= 900)...
+PASS: No 900+ codes found.
+Checking product code sorting...
+PASS: Product codes sorted.
+--- 2. Processing Data ---
+Checking customer column sorting...
+PASS: Koda headers sorted by customer code.
+--- 3. Writing to Template ---
+--- 4. Verifying Output File ---
+Checking Row 2 Headers...
+PASS: Row 2 headers match.
+Detected Header Row: 2, Footer Row: None
+WARN: Footer row not found (might be overwritten or logic error).

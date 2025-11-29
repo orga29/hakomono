@@ -1,0 +1,14 @@
+C:\Users\win\AppData\Local\Programs\Python\Python312\Lib\site-packages\openpyxl\reader\workbook.py:118: UserWarning: Print area cannot be set to Defined name: 在庫集計表!$B:$B.
+  warn(f"Print area cannot be set to Defined name: {defn.value}.")
+--- 1. Loading Source ---
+--- 2. Processing Data ---
+Checking Yamato headers sorting...
+PASS: Yamato headers sorted by priority.
+--- 3. Writing to Template ---
+--- 4. Verifying Output File ---
+Checking Row 2 Headers...
+FAIL: Row 2 headers mismatch.
+Expected: ['松戸', 'ひばりが丘', 'ｱﾝﾄﾞ大泉', 'ﾌｰﾄﾞ学芸大', 'ﾌｰﾄﾞ湘南']
+Actual:   ['ﾗﾐ', 'ﾗﾐ', 'ﾗﾐ', 'ﾗﾐ', 'ﾗﾐ']
+Detected Footer Row: 3
+PASS: Footer headers match.

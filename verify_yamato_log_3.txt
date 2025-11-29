@@ -1,0 +1,9 @@
+--- 1. Loading Source ---
+Traceback (most recent call last):
+--- 2. Processing Data ---
+  File "C:\Users\win\for-python\hakomono\verify_yamato.py", line 96, in <module>
+    verify_yamato()
+  File "C:\Users\win\for-python\hakomono\verify_yamato.py", line 15, in verify_yamato
+    df_koda, df_yamato, koda_headers, yamato_headers = process_data(filtered_df, col_mapping)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: too many values to unpack (expected 4)
