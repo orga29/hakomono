@@ -38,3 +38,34 @@ python app.py
 
 ---
 この README は最小限のテンプレートです。必要があれば追記・修正してください。
+
+## クイックスタート
+- 仮想環境作成および依存インストール:
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+- ローカルで起動（開発）:
+```powershell
+streamlit run app.py
+# 別ポートで起動する例
+streamlit run app.py --server.port 8502
+```
+
+## よく使うコマンド
+- 依存の再インストール: `pip install -r requirements.txt`
+- ログをファイルに出力して起動:
+```powershell
+streamlit run app.py 2>&1 | Tee-Object -FilePath streamlit_start.log
+```
+
+## トラブルシューティング
+- よくある問題と対処は `TROUBLESHOOTING.md` を参照してください。
+
+## 貢献方法
+- 開発ルール・PR の流れは `CONTRIBUTING.md` を参照してください。
+
+## 次のステップ（提案）
+- 必要なら `LICENSE` を追加します（社内専用表記 or OSS ライセンス）。
+- 常駐化（Windows サービスまたはタスクスケジューラ）や CI（GitHub Actions）を追加可能です。
