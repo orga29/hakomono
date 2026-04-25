@@ -1,59 +1,77 @@
+from pathlib import Path
+
 import streamlit as st
-import pandas as pd
-from logic import load_source_data, process_data, write_to_template
-import io
-from datetime import datetime
 
-st.set_page_config(page_title="Hakomono Aggregation App", layout="wide")
+from logic import (
+    DEFAULT_SOURCE_SHEET_URL,
+    DEFAULT_TEMPLATE_PATH,
+    load_source_data,
+    process_data,
+    suggested_output_filename,
+    write_to_template,
+)
 
-st.title("Hakomono Aggregation App")
-st.markdown("Upload the source file and template to generate the aggregation report.")
 
-# File Uploaders
-col1, col2 = st.columns(2)
-with col1:
-    source_file = st.file_uploader("Source File (受注集計表)", type=["xlsx", "xlsm"])
-with col2:
-    template_file = st.file_uploader("Template File (集計表)", type=["xlsx", "xlsm"])
+st.set_page_config(page_title="はこもの集計 2026.04", layout="wide")
 
-if source_file and template_file:
-    if st.button("Run Aggregation"):
-        try:
-            with st.spinner("Processing..."):
-                # Load Source
-                filtered_df, col_mapping = load_source_data(source_file)
-                st.success(f"Loaded source data. Found {len(filtered_df)} 'Box' items.")
-                
-                # Process
-                df_koda, df_yamato, koda_headers, yamato_headers, yamato_delivery_types = process_data(filtered_df, col_mapping)
-                st.info(f"Split data: {len(df_koda.columns)} cols for Koda, {len(df_yamato.columns)} cols for Yamato.")
-                
-                # Write to Template
-                # We need to reset the template file pointer because it might have been read or we need a fresh copy
-                template_file.seek(0)
-                
-                # Generate filename
-                today_str = datetime.now().strftime("%y%m%d")
-                output_filename = f"集計表{today_str}.xlsm"
-                
-                output_buffer = write_to_template(template_file, df_koda, df_yamato, koda_headers, yamato_headers, yamato_delivery_types, output_filename)
-                
-                st.success("Aggregation complete!")
-                
-                # Download Button
-                st.download_button(
-                    label="Download Result",
-                    data=output_buffer,
-                    file_name=output_filename,
-                    mime="application/vnd.ms-excel.sheet.macroEnabled.12"
-                )
-                
-                # Preview (Optional)
-                with st.expander("Preview Data (Koda)"):
-                    st.dataframe(df_koda.head())
-                with st.expander("Preview Data (Yamato)"):
-                    st.dataframe(df_yamato.head())
-                    
-        except Exception as e:
-            st.error(f"An error occurred: {e}")
-            st.exception(e)
+st.markdown(
+    """
+    <style>
+    div.stButton > button,
+    div.stDownloadButton > button {
+        font-weight: 700;
+        font-size: 1.08rem;
+        padding: 0.7rem 1.3rem;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+st.title("【はこもの集計】2026.04")
+st.markdown("元データの Google スプレッドシートを読み込み、ローカルのテンプレート `.xlsx` に書き込んだ完成ファイルをダウンロードできます。")
+
+source_sheet_url = st.text_input(
+    "元データ Google スプレッドシート URL",
+    value=DEFAULT_SOURCE_SHEET_URL,
+)
+template_path = Path(DEFAULT_TEMPLATE_PATH)
+st.caption(f"テンプレート: {template_path.name}")
+st.caption("ダウンロード名は `hakomono-mmdd.xlsx` 形式です。重複時の `(1)` などの付与はブラウザ側の保存動作に従います。")
+
+if st.button("集計開始"):
+    try:
+        with st.spinner("Processing..."):
+            filtered_df, col_mapping = load_source_data(source_sheet_url)
+            st.success(
+                f"ソースデータを読み込みました。該当する箱ものが{len(filtered_df)}件見つかりました。"
+            )
+
+            (
+                df_koda,
+                df_yamato,
+                koda_headers,
+                yamato_headers,
+                yamato_delivery_types,
+            ) = process_data(filtered_df, col_mapping)
+
+            output_buffer = write_to_template(
+                template_path,
+                df_koda,
+                df_yamato,
+                koda_headers,
+                yamato_headers,
+                yamato_delivery_types,
+            )
+
+            st.success("集計完了")
+            st.download_button(
+                label="ファイルをダウンロード",
+                data=output_buffer,
+                file_name=suggested_output_filename(),
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            )
+
+    except Exception as exc:
+        st.error(f"An error occurred: {exc}")
+        st.exception(exc)

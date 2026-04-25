@@ -1,3 +1,7 @@
 streamlit
 pandas
 openpyxl
+gspread
+gspread-dataframe
+google-auth
+google-auth-oauthlib
