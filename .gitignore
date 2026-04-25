@@ -7,6 +7,7 @@ __pycache__/
 *.xlsm
 *.xlsx
 *.xls
+!hakomono_template.xlsx
 venv/
 env/
 .DS_Store
