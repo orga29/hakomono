@@ -796,9 +796,13 @@ def _set_yamato_title(worksheet):
 
 
 def _yamato_group_name(delivery_type):
-    normalized = _normalize_text(delivery_type)
-    if normalized in ["ﾗﾐ", "ﾗﾐ(ｻﾈｯﾄ行)", "社内便3"]:
-        return normalized
+    text = _normalize_text(delivery_type)
+    if "社内便3" in text:
+        return "社内便3"
+    if "ﾗﾐ(ｻﾈｯﾄ行)" in text:
+        return "ﾗﾐ(ｻﾈｯﾄ行)"
+    if "ﾗﾐ" in text:
+        return "ﾗﾐ"
     return "その他"
 
 
