@@ -68,11 +68,18 @@ YAMATO_SUMMARY_HEIGHT = 24.75
 
 
 def suggested_output_filename(now=None):
+    """
+    実行時の日付に基づいた推奨出力ファイル名を生成します（例: hakomono-0427.xlsx）
+    """
     now = now or datetime.now(ZoneInfo("Asia/Tokyo"))
     return f"hakomono-{now.strftime('%m%d')}.xlsx"
 
 
 def load_source_data(source_url=DEFAULT_SOURCE_SHEET_URL):
+    """
+    GoogleスプレッドシートまたはローカルのExcelからソースデータを読み込み、
+    レイアウトを自動判別して得意先情報と注文データを抽出します。
+    """
     df_raw = _read_source_dataframe(source_url)
     code_row_idx, delivery_row_idx, customer_row_idx, data_start_idx = _detect_source_layout(df_raw)
 
@@ -117,6 +124,9 @@ def load_source_data(source_url=DEFAULT_SOURCE_SHEET_URL):
 
 
 def process_data(filtered_df, col_mapping):
+    """
+    抽出されたデータを「こだ（ラミ）」と「ヤマト・その他」の2つの集計用に分類・整理します。
+    """
     base_cols = filtered_df.loc[:, ["product_code", "product_name"]].copy()
     base_cols.columns = [PRODUCT_CODE_LABEL, PRODUCT_NAME_LABEL]
     base_cols[BOX_TYPE_LABEL] = BOX_LABEL
@@ -253,6 +263,10 @@ def _normalize_text(value):
 
 
 def _is_excluded_customer_code(code_str):
+    if code_str == "901-2":
+        # 「福・本店(加工)」は 900番台だが例外として集計に含める
+        return False
+
     match = re.match(r"^(\d+)", code_str)
     return bool(match and int(match.group(1)) >= 900)
 
