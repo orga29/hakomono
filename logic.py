@@ -816,6 +816,7 @@ def _set_yamato_group_borders(worksheet, delivery_types, total_col, footer_grand
         boundary_cols.append(YAMATO_CUSTOMER_START_COL + len(delivery_types) - 1)
 
     medium_side = Side(style="medium")
+    # 垂直の境界線を引く
     for col_idx in boundary_cols:
         for row_idx in range(YAMATO_DELIVERY_ROW, footer_grand_total_row + 1):
             cell = worksheet.cell(row_idx, col_idx)
@@ -825,11 +826,28 @@ def _set_yamato_group_borders(worksheet, delivery_types, total_col, footer_grand
                 right=medium_side,
                 top=current.top,
                 bottom=current.bottom,
-                diagonal=current.diagonal,
-                diagonal_direction=current.diagonal_direction,
-                outline=current.outline,
-                vertical=current.vertical,
-                horizontal=current.horizontal,
+            )
+
+    # 「社内便3」の上下の境界線を引いて四角で囲む
+    for idx, delivery_type in enumerate(delivery_types, start=YAMATO_CUSTOMER_START_COL):
+        if _normalize_text(delivery_type) == "社内便3":
+            # 上端
+            top_cell = worksheet.cell(YAMATO_DELIVERY_ROW, idx)
+            top_current = top_cell.border
+            top_cell.border = Border(
+                left=top_current.left,
+                right=top_current.right,
+                top=medium_side,
+                bottom=top_current.bottom,
+            )
+            # 下端
+            bottom_cell = worksheet.cell(footer_grand_total_row, idx)
+            bottom_current = bottom_cell.border
+            bottom_cell.border = Border(
+                left=bottom_current.left,
+                right=bottom_current.right,
+                top=bottom_current.top,
+                bottom=medium_side,
             )
 
 
