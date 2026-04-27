@@ -12,7 +12,7 @@ import pandas as pd
 from openpyxl.workbook.properties import CalcProperties
 from openpyxl.formula.translate import Translator
 from openpyxl.formula.translate import TranslatorError
-from openpyxl.styles import Border, Side
+from openpyxl.styles import Border, Side, Font
 from openpyxl.utils import get_column_letter
 
 
@@ -65,6 +65,7 @@ YAMATO_SAMPLE_TOTAL_COL = 32  # AF
 YAMATO_UNIFORM_WIDTH = 5.57
 YAMATO_HEADER_HEIGHT = 58.5
 YAMATO_SUMMARY_HEIGHT = 24.75
+KODA_UNIFORM_WIDTH = 3.14
 
 
 def suggested_output_filename(now=None):
@@ -384,6 +385,13 @@ def _write_koda_sheet(worksheet, df, customer_names):
         worksheet.cell(KODA_HEADER_ROW, col_idx, display_name)
         worksheet.cell(footer_header_row, col_idx, display_name)
 
+    # ヘッダーとフッター（得意先名行）のフォントサイズを10ptに設定
+    for r in [KODA_HEADER_ROW, footer_header_row]:
+        for c in range(1, total_col + 1):
+            cell = worksheet.cell(row=r, column=c)
+            if cell.font:
+                cell.font = Font(name=cell.font.name, size=10, bold=cell.font.bold, italic=cell.font.italic, color=cell.font.color)
+
     for row_idx, row in enumerate(df.itertuples(index=False), start=KODA_DATA_START_ROW):
         worksheet.cell(row_idx, 1, row[0])
         worksheet.cell(row_idx, 2, row[1])
@@ -510,6 +518,13 @@ def _write_yamato_sheet(worksheet, df, customer_names, delivery_types):
         worksheet.cell(YAMATO_DELIVERY_ROW, col_idx, delivery_type)
         worksheet.cell(YAMATO_HEADER_ROW, col_idx, customer_name)
         worksheet.cell(footer_header_row, col_idx, customer_name)
+
+    # ヘッダーとフッター（得意先名行）のフォントサイズを10ptに設定
+    for r in [YAMATO_HEADER_ROW, footer_header_row]:
+        for c in range(1, total_col + 1):
+            cell = worksheet.cell(row=r, column=c)
+            if cell.font:
+                cell.font = Font(name=cell.font.name, size=10, bold=cell.font.bold, italic=cell.font.italic, color=cell.font.color)
 
     for row_idx, row in enumerate(df.itertuples(index=False), start=YAMATO_DATA_START_ROW):
         worksheet.cell(row_idx, 1, row[0])
@@ -750,9 +765,8 @@ def _filter_zero_total_rows(df):
 
 
 def _normalize_koda_column_widths(worksheet, total_col):
-    uniform_width = 7
     for col_idx in range(KODA_CUSTOMER_START_COL, total_col + 1):
-        worksheet.column_dimensions[get_column_letter(col_idx)].width = uniform_width
+        worksheet.column_dimensions[get_column_letter(col_idx)].width = KODA_UNIFORM_WIDTH
 
 
 def _format_koda_customer_name(name):
