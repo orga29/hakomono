@@ -796,7 +796,10 @@ def _set_yamato_title(worksheet):
 
 
 def _yamato_group_name(delivery_type):
-    return _normalize_text(delivery_type)
+    normalized = _normalize_text(delivery_type)
+    if normalized in ["ﾗﾐ", "ﾗﾐ(ｻﾈｯﾄ行)", "社内便3"]:
+        return normalized
+    return "その他"
 
 
 def _set_yamato_group_borders(worksheet, delivery_types, total_col, footer_grand_total_row):
