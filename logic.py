@@ -272,9 +272,14 @@ def _is_excluded_customer_code(code_str):
 
 
 def _get_sort_key(text):
-    parts = re.findall(r"\d+", _normalize_text(text))
+    text = _normalize_text(text)
+    if text == "901-2":
+        # 「福・本店(加工)」(901-2) を「福・本店」(604-01) の直後に並べるための特別ルール
+        return (604, 1, 1)
+
+    parts = re.findall(r"\d+", text)
     if not parts:
-        return (float("inf"), _normalize_text(text))
+        return (float("inf"), text)
     return tuple(int(part) for part in parts)
 
 
