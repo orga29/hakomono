@@ -798,12 +798,15 @@ def _set_yamato_title(worksheet):
 def _yamato_group_name(delivery_type):
     text = _normalize_text(delivery_type)
     if "社内便3" in text:
-        return "社内便3"
-    if "ﾗﾐ(ｻﾈｯﾄ行)" in text:
-        return "ﾗﾐ(ｻﾈｯﾄ行)"
+        return "GROUP_SHANAIBEN_3"
+    if "社内便" in text:
+        # 社内便1, 社内便2などはすべて同じグループにする
+        return "GROUP_SHANAIBEN_1_2"
+    if "ｻﾈｯﾄ" in text:
+        return "GROUP_RAMI_SANET"
     if "ﾗﾐ" in text:
-        return "ﾗﾐ"
-    return "その他"
+        return "GROUP_RAMI"
+    return "GROUP_OTHER"
 
 
 def _set_yamato_group_borders(worksheet, delivery_types, total_col, footer_grand_total_row):
