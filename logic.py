@@ -796,12 +796,7 @@ def _set_yamato_title(worksheet):
 
 
 def _yamato_group_name(delivery_type):
-    normalized = _normalize_text(delivery_type)
-    if normalized == "ﾗﾐ":
-        return "ﾗﾐ"
-    if normalized == "ﾗﾐ(ｻﾈｯﾄ行)":
-        return "ﾗﾐ(ｻﾈｯﾄ行)"
-    return "その他"
+    return _normalize_text(delivery_type)
 
 
 def _set_yamato_group_borders(worksheet, delivery_types, total_col, footer_grand_total_row):
@@ -812,6 +807,10 @@ def _set_yamato_group_borders(worksheet, delivery_types, total_col, footer_grand
         if previous_group is not None and current_group != previous_group:
             boundary_cols.append(idx - 1)
         previous_group = current_group
+
+    # 最後の得意先列（合計列の直前）にも右側の境界線を追加
+    if delivery_types:
+        boundary_cols.append(YAMATO_CUSTOMER_START_COL + len(delivery_types) - 1)
 
     medium_side = Side(style="medium")
     for col_idx in boundary_cols:
