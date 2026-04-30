@@ -105,7 +105,7 @@ def load_source_data(source_url=DEFAULT_SOURCE_SHEET_URL):
                 "customer_code": code_str,
                 "delivery_type": delivery_type_str,
                 "customer_name": customer_name_str,
-                "sort_key": _get_sort_key(code_str),
+                "sort_key": _get_customer_sort_key(code_str),
             }
         )
 
@@ -281,6 +281,23 @@ def _get_sort_key(text):
     parts = re.findall(r"\d+", text)
     if not parts:
         return (float("inf"), text)
+    return tuple(int(part) for part in parts)
+
+
+def _get_customer_sort_key(code_str):
+    code_str = _normalize_text(code_str)
+    if code_str == "901-2":
+        # 「福・本店(加工)」(901-2) を「福・本店」(604-01) の直後に並べる
+        return (604, "01", 1)
+
+    match = re.fullmatch(r"(\d+)-(.+)", code_str)
+    if match:
+        base_code, branch_code = match.groups()
+        return (int(base_code), branch_code)
+
+    parts = re.findall(r"\d+", code_str)
+    if not parts:
+        return (float("inf"), code_str)
     return tuple(int(part) for part in parts)
 
 
